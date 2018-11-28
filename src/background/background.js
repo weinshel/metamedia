@@ -20,11 +20,6 @@ async function onInstall (details) {
 }
 browser.runtime.onInstalled.addListener(onInstall)
 
-// set up default for logging, currently it is true.
-
-// console.log('Here I am');
-// loggingDefault.setLoggingDefault();
-
 /* WEB REQUEST/TAB LISTENERS */
 /* ========================= */
 
@@ -109,10 +104,7 @@ async function onDOMContentLoaded (details) {
   }
   tabData[tabId]['title'] = tab.title
 
-
   dexie.storePage(tabData[tabId])
-  // now fetch and store the favicon database
-  // fetchSetGetFavicon(url, faviconUrl)
 }
 
 async function onHistoryStateUpdated (details) {
@@ -132,7 +124,7 @@ async function onHistoryStateUpdated (details) {
   }
 
   // simulate a new page load
-  onBeforeNavigate(details)
+  await onBeforeNavigate(details)
 
   const tab = await browser.tabs.get(details.tabId)
   tabData[tabId]['title'] = tab.title
