@@ -11,12 +11,10 @@
     "author": "Ben Weinshel",
     "permissions": [
         "storage",
-        "unlimitedStorage",
         "tabs",
-        "alarms",
         "management",
-        "notifications",
         "privacy",
+        "sessions",
         "webRequest",
         "webNavigation",
         "<all_urls>"

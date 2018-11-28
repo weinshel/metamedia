@@ -4,11 +4,13 @@ import tldjs from 'tldjs'
 
 import InferencingWorker from './inferencing/inferencing.worker'
 import dexie from './dexie/dexie'
+import db from './dexie/setup'
 
 const inferencingWorker = new InferencingWorker()
 window.queryDexie = dexie.query
 
 let tabData = {}
+let tabSessions = {}
 
 async function onInstall (details) {
   // also runs on update
@@ -41,6 +43,7 @@ browser.webNavigation.onDOMContentLoaded.addListener(onDOMContentLoaded)
 browser.webNavigation.onHistoryStateUpdated.addListener(onHistoryStateUpdated)
 
 /* listener for tab close */
+browser.tabs.onCreated.addListener(tabOnCreated)
 browser.tabs.onRemoved.addListener(clearTabData)
 
 /* listeners to signal content scripts */
@@ -57,9 +60,11 @@ function isMainFramePage (details) {
     !browser.extension.inIncognitoContext
 }
 
-function onBeforeNavigate (details) {
+async function onBeforeNavigate (details) {
   const { tabId, url } = details
   if (!isMainFramePage(details)) return
+
+  const tsId = await browser.sessions.getTabValue(tabId, 'tsId')
 
   /* if we have data from a previous load, send it to trackers
    * worker and clear out tabData here */
@@ -68,6 +73,7 @@ function onBeforeNavigate (details) {
   }
 
   const pageId = Date.now()
+  browser.sessions.setTabValue(tabId, 'pageId', pageId)
   let urlObj = new URL(url)
 
   const domain = tldjs.getDomain(urlObj.hostname) || urlObj.hostname
@@ -80,8 +86,13 @@ function onBeforeNavigate (details) {
     path: urlObj.pathname,
     protocol: urlObj.protocol,
     url: url,
-    webRequests: []
+    tsId: tsId
   }
+
+  tabSessions[tsId].push({ pageId })
+  console.log('tsId', tsId, tabSessions[tsId])
+  // dexie.tabSessionUpdate(tsid, )
+  db.tabSessions.update(tsId, { pages: tabSessions[tsId] })
 }
 
 async function onDOMContentLoaded (details) {
@@ -129,79 +140,27 @@ async function onHistoryStateUpdated (details) {
   dexie.storePage(tabData[tabId])
 }
 
-/* check if the site's favicon is already cahced in local storage and
-if the cache is recent (same favicon url or not)
-if the data is not cahched or the cached data is stale
-fetch the favicon data and store it in base 64 format and return that data
-*/
-/*
-async function fetchSetGetFavicon(url, faviconurl){
-  let x = 'favicon_'+url
-  let checkFav = await browser.storage.local.get({[x]: 'no favicon'});
-  if(checkFav[x]!='no favicon'){
-    //already stored favicon
-    //and the favicon is same as before
-    if(checkFav[x]['faviconurl']==faviconurl){
-      return checkFav[x]['favicondata'];
+async function tabOnCreated (tab) {
+  const tsId = Date.now()
+  await browser.sessions.setTabValue(tab.id, 'tsId', tsId)
+  tabSessions[tsId] = []
+
+  if (!tab.openerTabId) {
+    db.tabSessions.add({ tsId: tsId, parentTsId: null, pages: [] })
+  } else {
+    const oldId = await browser.sessions.getTabValue(tab.openerTabId, 'tsId')
+
+    // add new tsid to old tab
+    if (tabSessions[oldId] && tabSessions[oldId].length > 0) {
+      tabSessions[oldId][tabSessions[oldId].length - 1]['childTabSession'] = tsId
+      db.tabSessions.update(oldId, { pages: tabSessions[oldId] })
+    } else {
+      console.log('uh oh')
     }
+
+    db.tabSessions.add({ tsId: tsId, parentTsId: oldId, pages: [] })
   }
-  if(faviconurl==''){
-    //no favicon for this tab
-    await browser.storage.local.set(
-      {[x]: {
-        'url':url,
-        'faviconurl':faviconurl,
-        'favicondata':''}
-      }
-    );
-    return '';
-  }
-  var favicon = new XMLHttpRequest();
-  favicon.responseType = 'blob';
-  favicon.open('get', faviconurl);
-  favicon.onload = function() {
-    var fileReader = new FileReader();
-    fileReader.onloadend = async function() {
-      // fileReader.result is a data-URL (string) in base 64 format
-      x = 'favicon_'+url
-      await browser.storage.local.set(
-        {
-          [x]: {
-            'url':url,
-            'faviconurl':faviconurl,
-            'favicondata':fileReader.result
-          }
-        });
-    };
-    // favicon.response is a Blob object
-    fileReader.readAsDataURL(favicon.response);
-  };
-  favicon.send();
-  checkFav = await browser.storage.local.get({[x]: 'no favicon'});
-  return checkFav[x]['favicondata'];
 }
-window.fetchSetGetFavicon=fetchSetGetFavicon;
-*/
-
-/*
-getFavicon: A simple function to retrieve favicon data from local storage
-given a url.
-
-Usage: <img src="THE BASE64 STRING GIVEN BY THIS FUNCTION." />
-Always check if the returned base64 url is empty.
-
-*/
-/*
-async function getFavicon(url) {
-  let x = 'favicon_'+url
-  let checkFav = await browser.storage.local.get({[x]: 'no favicon'});
-  if(checkFav[x]!='no favicon'){
-    return checkFav[x]['favicondata'];
-  }
-  return ''
-}
-window.getFavicon=getFavicon;
-*/
 
 /**
  * Clears tabData info for a tab,
@@ -232,8 +191,9 @@ async function onPageLoadFinish (details) {
     }
 
     const data = await getTabData(tabId)
-    // const screenshot = await browser.tabs.captureTab(tabId)
-    // dexie.storeScreenshot(tabData[tabId]['pageId'], screenshot)
+    const pageId = await browser.sessions.getTabValue(tabId, 'pageId')
+    const screenshot = await browser.tabs.captureTab(tabId)
+    db.screenshots.add({ pageId, screenshot })
   }
 }
 
