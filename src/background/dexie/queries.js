@@ -1,7 +1,7 @@
 import db from './setup'
 
 function getAllPages () {
-  return db.pages.toArray()
+  return db.pages.reverse().toArray()
 }
 
 const queries = {

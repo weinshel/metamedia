@@ -19,6 +19,11 @@ export async function storeInference (id, infer) {
   })
 }
 
+export function getScreenshot (pageId) {
+  return db.screenshots.get(pageId)
+}
+window.getScreenshot = getScreenshot
+
 export default {
   storePage,
   storeInference,

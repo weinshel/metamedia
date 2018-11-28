@@ -21,18 +21,29 @@ export default class PageInfo extends React.Component {
     }
   }
 
-  componentDidUpdate (prevProps) {
+  async componentDidMount () {
+    const background = await browser.runtime.getBackgroundPage()
+    const q = await background.getScreenshot(this.state.data.pageId)
+    const screenshot = q && q.screenshot ? q.screenshot : undefined
+    this.setState({ screenshot: screenshot })
+  }
+
+  async componentDidUpdate (prevProps) {
     // Typical usage (don't forget to compare props):
     if (this.props.data !== prevProps.data) {
       this.setState({ data: this.props.data })
+      const background = await browser.runtime.getBackgroundPage()
+      const q = await background.getScreenshot(this.state.data.pageId)
+    const screenshot = q && q.screenshot ? q.screenshot : undefined
+      this.setState({ screenshot: screenshot })
     }
   }
 
   render () {
-    const { data } = this.state
+    const { data, screenshot } = this.state
     return (<div>
       <View as={'div'} width={400} height={400} style={{ width: 400, height: 400, overflow: 'scroll' }}>
-        <img src={data.screenshot} width={400} />
+        <img src={screenshot} width={400} />
       </View>
       <Text>
         <p>
