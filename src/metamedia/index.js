@@ -24,12 +24,13 @@ class Popup extends React.Component {
   async componentDidMount () {
     // stub
     const background = await browser.runtime.getBackgroundPage()
-    const data = await background.queryDexie('getAllPages', {})
-    this.setState({ data })
+    const tabSessionData = await background.queryDexie('getAllTabSessions', {})
+    const pageData = await background.queryDexie('getAllPages', {})
+    this.setState({ pageData, tabSessionData })
   }
 
   render () {
-    const { selectedIndex, data } = this.state
+    const { selectedIndex, pageData, tabSessionData } = this.state
 
     return (<div>
       <TabList
@@ -43,10 +44,13 @@ class Popup extends React.Component {
           </Text>
         </TabPanel>
         <TabPanel title='Screenshots'>
-          {data && <PageShots data={data} />}
+          {pageData && <PageShots data={pageData} />}
         </TabPanel>
-        <TabPanel title='Raw Data'>
-          {data && <RawData data={data} />}
+        <TabPanel title='Raw Page Data'>
+          {pageData && <RawData data={pageData} />}
+        </TabPanel>
+        <TabPanel title='Raw Tab Data'>
+          {tabSessionData && <RawData data={tabSessionData} />}
         </TabPanel>
       </TabList>
     </div>)

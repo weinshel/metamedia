@@ -4,8 +4,13 @@ function getAllPages () {
   return db.pages.reverse().toArray()
 }
 
+function getAllTabSessions () {
+  return db.tabSessions.toArray()
+}
+
 const queries = {
-  getAllPages
+  getAllPages,
+  getAllTabSessions
 }
 
 function makeQuery (q, args) {
