@@ -1,6 +1,7 @@
 /** @module background */
 
 import tldjs from 'tldjs'
+import palette from 'huey/palette'
 
 import InferencingWorker from './inferencing/inferencing.worker'
 import dexie from './dexie/dexie'
@@ -44,6 +45,8 @@ browser.tabs.onRemoved.addListener(clearTabData)
 /* listeners to signal content scripts */
 browser.webNavigation.onCompleted.addListener(onPageLoadFinish)
 browser.webNavigation.onHistoryStateUpdated.addListener(onPageLoadFinish)
+
+browser.tabs.onUpdated.addListener(onLoadCompleted, ['status'])
 
 function isMainFramePage (details) {
   const { tabId, frameId, url } = details
@@ -181,11 +184,39 @@ async function onPageLoadFinish (details) {
     } catch (e) {
       console.log(e)
     }
+//   }
+// }
 
+// async function onLoadCompleted (tabId, details) {
+//   console.log('hi')
+//   if (details.status === 'complete') {
+    console.log('hello')
     const data = await getTabData(tabId)
     const pageId = await browser.sessions.getTabValue(tabId, 'pageId')
+
+    // take screenshot
     const screenshot = await browser.tabs.captureTab(tabId)
     db.screenshots.add({ pageId, screenshot })
+
+    // get prominent colors on page
+    let image = document.createElement('img')
+    image.setAttribute('src', screenshot)
+    image.setAttribute('width', 400)
+    image.setAttribute('height', 400)
+
+    let canvas = document.createElement('canvas')
+
+    var context = canvas.getContext('2d')
+    canvas.width = image.width
+    canvas.height = image.height
+    context.drawImage(image, 0, 0, image.width, image.height)
+    const imageData = context.getImageData(
+      0, 0, image.width, image.height
+    )
+
+    const pal = palette(imageData.data, 5)
+    console.log(pal)
+    db.pages.update(pageId, { palette: pal })
   }
 }
 
