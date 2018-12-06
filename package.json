@@ -1,6 +1,6 @@
 {
   "name": "webdna",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "Visualize your web history and web browsing by viewing the colors of the web.",
   "scripts": {
     "build": "wp --progress --config webpack.dev.js",
