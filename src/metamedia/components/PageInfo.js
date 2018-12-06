@@ -3,10 +3,18 @@ import ReactDOM from 'react-dom'
 
 import View from '@instructure/ui-layout/lib/components/View'
 import Text from '@instructure/ui-elements/lib/components/Text'
-import TruncateText from '@instructure/ui-elements/lib/components/TruncateText'
 
-
-import ColorSwatches from './ColorSwatch'
+const ColorRect = ({ color }) => (
+  <div
+    key={Math.random()}
+    style={{
+      // display: 'inline-block',
+      width: 60,
+      height: 10,
+      backgroundColor: 'rgb(' + color.join(',') + ')'
+    }}
+  />
+)
 
 // function importAll(r) {
 //   let images = {};
@@ -51,12 +59,9 @@ export default class PageInfo extends React.Component {
   render () {
     const { data, screenshot } = this.state
     const { width } = this.props
+    const palette = data.palette
     if (!data) return null
     return (<div style={{ width: width }}>
-      <View as={'div'} style={{ width: width, height: width, overflow: 'scroll' }}>
-        <img src={screenshot} width={width} />
-      </View>
-      {data.palette && <ColorSwatches palette={data.palette} />}
       <Text>
         {data.logos && data.logos.icon && <span><img width={16} src={data.logos.icon} />&nbsp;</span>}
         <strong>{data.title}</strong><br />
@@ -64,7 +69,26 @@ export default class PageInfo extends React.Component {
         <strong>Topic:</strong> {data.inference}<br />
         {/* <strong>Last visit time:</strong> {Date(data.pageId)}<br /> */}
       </Text>
-      {data.themeColor && <div style={{ width: 100, height: 100, backgroundColor: data.themeColor }} />}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'start',
+          width: 360,
+          height: 10,
+          marginTop: 10,
+          marginBottom: 10
+        }}
+      >
+        {palette.Vibrant && <ColorRect color={palette.Vibrant._rgb} />}
+        {palette.LightVibrant && <ColorRect color={palette.LightVibrant._rgb} />}
+        {palette.DarkVibrant && <ColorRect color={palette.DarkVibrant._rgb} />}
+        {palette.Muted && <ColorRect color={palette.Muted._rgb} />}
+        {palette.LightMuted && <ColorRect color={palette.LightMuted._rgb} />}
+        {palette.DarkMuted && <ColorRect color={palette.DarkMuted._rgb} />}
+      </div>
+      <div>
+        <img src={screenshot} width={width} />
+      </div>
     </div>)
   }
 }
