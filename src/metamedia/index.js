@@ -33,11 +33,12 @@ class Popup extends React.Component {
   }
 
   async updateGroup (event) {
-    const groupBy = parseInt(event.target.value)
-    this.setState({ pageData: null, groupBy })
+    const groupBy = event.target.value
+    console.log('groupBy', groupBy)
+    this.setState({ pageData: null, groupBy: groupBy })
     const background = await browser.runtime.getBackgroundPage()
     const pageData = await background.queryDexie('getAllPages', { groupBy: groupBy })
-    this.setState({ pageData, groupBy })
+    this.setState({ pageData: pageData, groupBy: groupBy })
   }
 
   render () {
@@ -50,9 +51,8 @@ class Popup extends React.Component {
         onChange={(e) => this.setState({ selectedIndex: e })}
       >
         <TabPanel title='Color'>
-          {/* <RadioInputGroup
+          <RadioInputGroup
             name='group'
-            defaultValue='tsId'
             variant='toggle'
             description='Group by'
             value={this.state.groupBy}
@@ -61,7 +61,7 @@ class Popup extends React.Component {
             <RadioInput label='Tab' value='tsId' context='off' />
             <RadioInput label='Domain' value='domain' context='off' />
             <RadioInput label='Topic' value='inference' context='off' />
-          </RadioInputGroup> */}
+          </RadioInputGroup>
           <ColorViz data={pageData} tabSessionData={tabSessionData} groupBy={groupBy} />
         </TabPanel>
         <TabPanel title='Screenshots'>

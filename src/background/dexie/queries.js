@@ -1,7 +1,11 @@
 import db from './setup'
 
 function getAllPages ({ groupBy }) {
-  return db.pages.orderBy(groupBy).reverse().toArray()
+  let q = db.pages.orderBy(groupBy)
+  if (groupBy === 'tsId') {
+    q = q.reverse()
+  }
+  return q.toArray()
 }
 
 function getAllTabSessions () {
