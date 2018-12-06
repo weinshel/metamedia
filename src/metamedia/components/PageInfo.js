@@ -68,7 +68,7 @@ export default class PageInfo extends React.Component {
         <strong>Topic:</strong> {data.inference}<br />
         {/* <strong>Last visit time:</strong> {Date(data.pageId)}<br /> */}
       </Text>
-      <div
+      {palette && <div
         style={{
           display: 'flex',
           justifyContent: 'start',
@@ -84,7 +84,7 @@ export default class PageInfo extends React.Component {
         {palette.Muted && <ColorRect color={palette.Muted._rgb} />}
         {palette.LightMuted && <ColorRect color={palette.LightMuted._rgb} />}
         {palette.DarkMuted && <ColorRect color={palette.DarkMuted._rgb} />}
-      </div>
+      </div>}
       <div>
         {screenshot && <img src={screenshot} width={width} />}
         {!screenshot && <Spinner title='Screenshot loading' size='medium' />}

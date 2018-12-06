@@ -1,7 +1,7 @@
 import db from './setup'
 
-function getAllPages () {
-  return db.pages.orderBy('tsId').reverse().toArray()
+function getAllPages ({ groupBy }) {
+  return db.pages.orderBy(groupBy).reverse().toArray()
 }
 
 function getAllTabSessions () {
