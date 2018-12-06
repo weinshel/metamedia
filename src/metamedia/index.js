@@ -2,15 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import theme from '@instructure/ui-themes/lib/canvas'
-import Text from '@instructure/ui-elements/lib/components/Text'
 import TabList from '@instructure/ui-tabs/lib/components/TabList'
 import TabPanel from '@instructure/ui-tabs/lib/components/TabList/TabPanel'
-import Button from '@instructure/ui-buttons/lib/components/Button'
 
-import { themeOverrides } from '../colors'
-import RawData from './components/RawData'
-import PageShots from './components/PageShots'
 import ColorViz from './components/ColorViz'
+import PageShots from './components/PageShots'
+import RawData from './components/RawData'
+import { themeOverrides } from '../colors'
 
 theme.use({ overrides: themeOverrides })
 
@@ -40,7 +38,7 @@ class Popup extends React.Component {
         onChange={(e) => this.setState({ selectedIndex: e })}
       >
         <TabPanel title='Color'>
-          {pageData && <ColorViz data={pageData} tabSessionData={tabSessionData} />}
+          <ColorViz data={pageData} tabSessionData={tabSessionData} />
         </TabPanel>
         <TabPanel title='Screenshots'>
           {pageData && <PageShots data={pageData} />}

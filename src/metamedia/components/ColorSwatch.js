@@ -4,8 +4,6 @@ import Popover, { PopoverTrigger, PopoverContent } from '@instructure/ui-overlay
 import CloseButton from '@instructure/ui-buttons/lib/components/CloseButton'
 import View from '@instructure/ui-layout/lib/components/View'
 
-// import stringToColor from 'string-to-color'
-
 import PageInfo from './PageInfo'
 
 const ColorSquare = ({ color }) => (

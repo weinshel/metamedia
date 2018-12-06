@@ -1,8 +1,7 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 
-import View from '@instructure/ui-layout/lib/components/View'
 import Text from '@instructure/ui-elements/lib/components/Text'
+import Spinner from '@instructure/ui-elements/lib/components/Spinner'
 
 const ColorRect = ({ color }) => (
   <div
@@ -87,7 +86,8 @@ export default class PageInfo extends React.Component {
         {palette.DarkMuted && <ColorRect color={palette.DarkMuted._rgb} />}
       </div>
       <div>
-        <img src={screenshot} width={width} />
+        {screenshot && <img src={screenshot} width={width} />}
+        {!screenshot && <Spinner title='Screenshot loading' size='medium' />}
       </div>
     </div>)
   }
