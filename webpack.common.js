@@ -19,7 +19,6 @@ module.exports = {
     content: './src/content_scripts/content.js',
 
     // user facing pages
-    popup: './src/popup/metamedia.js',
     metamedia: './src/metamedia/index.js'
   },
   output: {
@@ -93,12 +92,6 @@ module.exports = {
       filename: 'background.html',
       chunks: ['background'],
       template: 'src/template.html'
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'popup.html',
-      chunks: ['popup'],
-      template: 'src/template.html',
-      title: EXT_NAME
     }),
     new HtmlWebpackPlugin({
       filename: 'metamedia.html',
