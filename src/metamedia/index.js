@@ -10,6 +10,7 @@ import Button from '@instructure/ui-buttons/lib/components/Button'
 import { themeOverrides } from '../colors'
 import RawData from './components/RawData'
 import PageShots from './components/PageShots'
+import ColorViz from './components/ColorViz'
 
 theme.use({ overrides: themeOverrides })
 
@@ -42,6 +43,9 @@ class Popup extends React.Component {
           <Text>
             hello hello
           </Text>
+        </TabPanel>
+        <TabPanel title='Color'>
+          {pageData && <ColorViz data={pageData} />}
         </TabPanel>
         <TabPanel title='Screenshots'>
           {pageData && <PageShots data={pageData} />}

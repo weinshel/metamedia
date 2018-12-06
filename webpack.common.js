@@ -68,12 +68,12 @@ module.exports = {
     ]
   },
   optimization: {
-    splitChunks: {
-      chunks: 'initial',
-      cacheGroups: {
-        default: false
-      }
-    }
+    // splitChunks: {
+    //   chunks: 'initial',
+    //   cacheGroups: {
+    //     default: false
+    //   }
+    // }
   },
   plugins: [
     new CleanWebpackPlugin(['extension/dist']),

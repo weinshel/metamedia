@@ -1,11 +1,19 @@
 /** @module background */
 
 import tldjs from 'tldjs'
-import palette from 'huey/palette'
+// import palette from 'huey/palette'
+// import dominant from 'huey/dominant'
+// import image from 'get-image-data'
+// import {promisify} from 'es6-promisify'
+import * as Vibrant from 'node-vibrant'
 
 import InferencingWorker from './inferencing/inferencing.worker'
 import dexie from './dexie/dexie'
 import db from './dexie/setup'
+
+// const getImg = promisify(image)
+
+// import websiteLogo from '../content_scripts/websiteLogo.js'
 
 const inferencingWorker = new InferencingWorker()
 window.queryDexie = dexie.query
@@ -46,7 +54,7 @@ browser.tabs.onRemoved.addListener(clearTabData)
 browser.webNavigation.onCompleted.addListener(onPageLoadFinish)
 browser.webNavigation.onHistoryStateUpdated.addListener(onPageLoadFinish)
 
-browser.tabs.onUpdated.addListener(onLoadCompleted, ['status'])
+// browser.tabs.onUpdated.addListener(onLoadCompleted, ['status'])
 
 function isMainFramePage (details) {
   const { tabId, frameId, url } = details
@@ -174,6 +182,8 @@ function clearTabData (tabId) {
 }
 
 async function onPageLoadFinish (details) {
+  if (!isMainFramePage(details)) return
+
   if (details.frameId === 0) {
     // not an iframe
     const tabId = details.tabId
@@ -189,34 +199,52 @@ async function onPageLoadFinish (details) {
 
 // async function onLoadCompleted (tabId, details) {
 //   console.log('hi')
-//   if (details.status === 'complete') {
-    console.log('hello')
-    const data = await getTabData(tabId)
+  // if (details.status === 'complete') {
+    // const data = await getTabData(tabId)
     const pageId = await browser.sessions.getTabValue(tabId, 'pageId')
 
     // take screenshot
     const screenshot = await browser.tabs.captureTab(tabId)
     db.screenshots.add({ pageId, screenshot })
 
+    browser.tabs.executeScript(tabId, {file: '/websiteLogo.js'})
+      .then(logos => {
+        if (logos && logos.length > 0) {
+          db.pages.update(pageId, { logos: logos[0] })
+        }
+      })
+
+    let v = new Vibrant(screenshot, {})
+    v.getPalette()
+      .then(palette => db.pages.update(pageId, { palette: palette }))
+
     // get prominent colors on page
-    let image = document.createElement('img')
-    image.setAttribute('src', screenshot)
-    image.setAttribute('width', 400)
-    image.setAttribute('height', 400)
+    // let simage = document.createElement('img')
+    // simage.setAttribute('src', screenshot)
+    // simage.setAttribute('width', 400)
+    // simage.setAttribute('height', 400)
 
-    let canvas = document.createElement('canvas')
+    // let canvas = document.createElement('canvas')
 
-    var context = canvas.getContext('2d')
-    canvas.width = image.width
-    canvas.height = image.height
-    context.drawImage(image, 0, 0, image.width, image.height)
-    const imageData = context.getImageData(
-      0, 0, image.width, image.height
-    )
+    // var context = canvas.getContext('2d')
+    // canvas.width = simage.width
+    // canvas.height = simage.height
+    // context.drawImage(simage, 0, 0, simage.width, simage.height)
+    // const imageData = context.getImageData(
+    //   0, 0, simage.width, simage.height
+    // )
 
-    const pal = palette(imageData.data, 5)
-    console.log(pal)
-    db.pages.update(pageId, { palette: pal })
+    // // const pal = palette(imageData.data, 5)
+    // const dom = dominant(imageData.data)
+    // console.log('dominant color', dom)
+    // db.pages.update(pageId, { dominantColor: dom })
+
+    // let color = l.themeColor || iconColor || dom
+    // if (Array.isArray(color)) {
+    //   color = 'rgb(' + color.join(',') + ')'
+    // }
+    // console.log('master color', color)
+    // db.pages.update(pageId, { color: color })
   }
 }
 
@@ -295,3 +323,8 @@ function runtimeOnMessage (message, sender, sendResponse) {
       return true // must do since calling sendResponse asynchronously
   }
 }
+
+browser.browserAction.onClicked.addListener(() => browser.tabs.create({
+  active: true,
+  url: '../dist/metamedia.html'
+}))

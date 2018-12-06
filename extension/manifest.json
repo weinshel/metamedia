@@ -24,7 +24,6 @@
         "19": "icons/logo19.png",
         "38": "icons/logo38.png"
         },
-        "default_popup": "dist/popup.html",
         "default_title": "Tracking Transparency"
     },
     "background": {

@@ -32,10 +32,6 @@ class Popup extends React.Component {
     }
 
     await browser.tabs.create(dashboardData)
-
-    let activityType = 'click dashboard button on popup'
-    let clickedElem = 'dashboard button'
-    await logging.logPopupActions(activityType, clickedElem)
   }
 
   async componentDidMount () {

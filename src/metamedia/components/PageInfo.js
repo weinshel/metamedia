@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom'
 
 import View from '@instructure/ui-layout/lib/components/View'
 import Text from '@instructure/ui-elements/lib/components/Text'
+import TruncateText from '@instructure/ui-elements/lib/components/TruncateText'
 
+
+import ColorSwatches from './ColorSwatch'
 
 // function importAll(r) {
 //   let images = {};
@@ -28,11 +31,8 @@ export default class PageInfo extends React.Component {
     const q = await background.getScreenshot(this.state.data.pageId)
     const screenshot = q && q.screenshot ? q.screenshot : undefined
 
-    // const image = <img src={screenshot} width={400} />
-
     this.setState({
-      screenshot: screenshot
-      // palette:pal,
+      screenshot
     })
   }
 
@@ -50,23 +50,19 @@ export default class PageInfo extends React.Component {
 
   render () {
     const { data, screenshot } = this.state
-    return (<div>
-      <View as={'div'} width={400} height={400} style={{ width: 400, height: 400, overflow: 'scroll' }}>
-        <img src={screenshot} width={400} />
+    const { width } = this.props
+    if (!data) return null
+    return (<div style={{ width: width }}>
+      <View as={'div'} style={{ width: width, height: width, overflow: 'scroll' }}>
+        <img src={screenshot} width={width} />
       </View>
-      {data.palette && <Text>{JSON.stringify(data.palette)}</Text>}
-      {data.palette && data.palette.map(c => {
-        const col = 'rgb(' + c.join(',') + ')'
-        return (<div key={Math.random()} style={{width: 50, height: 50, backgroundColor: col}} />)
-      })}
+      {data.palette && <ColorSwatches palette={data.palette} />}
       <Text>
-        <p>
-          <strong>{data.title}</strong><br />
-          <strong>Topic:</strong> {data.inference}<br />
-          <strong>URL:</strong> {data.protocol}//{data.hostname}{data.path}<br />
-          <strong>Visited</strong> {data.visitCount} times<br />
-          <strong>Last visit time:</strong> {Date(data.lastVisitTime)}<br />
-        </p>
+        {data.logos && data.logos.icon && <img width={16} src={data.logos.icon} />}&nbsp;
+        <strong>{data.title}</strong><br />
+        <strong>Topic:</strong> {data.inference}<br />
+        <strong>URL:</strong> {data.protocol}//{data.hostname}{data.path}<br />
+        {/* <strong>Last visit time:</strong> {Date(data.pageId)}<br /> */}
       </Text>
       {data.themeColor && <div style={{ width: 100, height: 100, backgroundColor: data.themeColor }} />}
     </div>)
