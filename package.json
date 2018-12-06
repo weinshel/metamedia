@@ -1,7 +1,7 @@
 {
-  "name": "metamedia",
+  "name": "webdna",
   "version": "0.0.2",
-  "description": "metamedia",
+  "description": "Visualize your web history and web browsing by viewing the colors of the web.",
   "scripts": {
     "build": "wp --progress --config webpack.dev.js",
     "build:prod": "wp --progress --config webpack.prod.js",

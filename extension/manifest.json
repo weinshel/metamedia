@@ -1,19 +1,17 @@
 {
     "manifest_version": 2,
-    "name": "metamedia",
+    "name": "Web DNA",
     "version": "0.0.2",
     "applications": {
         "gecko": {
             "id": "metamedia@weinshel.net"
         }
     },
-    "description": "metamedia",
+    "description": "Visualize your web history and web browsing by viewing the colors of the web.",
     "author": "Ben Weinshel",
     "permissions": [
         "storage",
         "tabs",
-        "management",
-        "privacy",
         "sessions",
         "webRequest",
         "webNavigation",
