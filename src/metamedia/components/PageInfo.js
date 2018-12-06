@@ -58,10 +58,10 @@ export default class PageInfo extends React.Component {
       </View>
       {data.palette && <ColorSwatches palette={data.palette} />}
       <Text>
-        {data.logos && data.logos.icon && <img width={16} src={data.logos.icon} />}&nbsp;
+        {data.logos && data.logos.icon && <span><img width={16} src={data.logos.icon} />&nbsp;</span>}
         <strong>{data.title}</strong><br />
-        <strong>Topic:</strong> {data.inference}<br />
         <strong>URL:</strong> {data.protocol}//{data.hostname}{data.path}<br />
+        <strong>Topic:</strong> {data.inference}<br />
         {/* <strong>Last visit time:</strong> {Date(data.pageId)}<br /> */}
       </Text>
       {data.themeColor && <div style={{ width: 100, height: 100, backgroundColor: data.themeColor }} />}

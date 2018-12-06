@@ -18,7 +18,7 @@ class Popup extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      selectedIndex: 1
+      selectedIndex: 0
     }
   }
 
@@ -39,13 +39,8 @@ class Popup extends React.Component {
         selectedIndex={selectedIndex}
         onChange={(e) => this.setState({ selectedIndex: e })}
       >
-        <TabPanel title='Home'>
-          <Text>
-            hello hello
-          </Text>
-        </TabPanel>
         <TabPanel title='Color'>
-          {pageData && <ColorViz data={pageData} />}
+          {pageData && <ColorViz data={pageData} tabSessionData={tabSessionData} />}
         </TabPanel>
         <TabPanel title='Screenshots'>
           {pageData && <PageShots data={pageData} />}

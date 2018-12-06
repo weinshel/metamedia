@@ -8,14 +8,31 @@ export default class ColorViz extends React.Component {
   }
 
   render () {
-    const { data } = this.props
+    const { data, tabSessionData } = this.props
+
+    let swatches = []
+    let prevTsId = 0
+    data.forEach(page => {
+      if (!page.palette) return
+      const margin = page.tsId === prevTsId ? 0 : 16
+      prevTsId = page.tsId
+      swatches.push(<ColorSwatches key={Math.random()} page={page} margin={margin} />)
+    })
 
     return (
       <div style={{
         display: 'flex',
-        justifyContent: 'start'
+        justifyContent: 'start',
+        flexWrap: 'wrap'
       }}>
-        {data.map(page => page.palette && <ColorSwatches page={page} />)}
+        {/* {tabSessionData.map(tabSession => (
+          <div key={Math.random()}>
+            {tabSession.pages.map(page => (
+              page.pageId && <ColorSwatches key={Math.random()} page={data[0]} />
+            ))}
+          </div>
+        ))} */}
+        {swatches}
       </div>
     )
   }

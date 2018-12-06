@@ -1,11 +1,11 @@
 import db from './setup'
 
 function getAllPages () {
-  return db.pages.reverse().toArray()
+  return db.pages.orderBy('tsId').reverse().toArray()
 }
 
 function getAllTabSessions () {
-  return db.tabSessions.toArray()
+  return db.tabSessions.reverse().toArray()
 }
 
 const queries = {

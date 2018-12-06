@@ -40,7 +40,7 @@ export default class PageShots extends React.Component {
     ))
 
     return (<div>
-      <PageInfo data={currentPageData} />
+      <PageInfo data={currentPageData} width={600}/>
       <Pagination
         as='nav'
         margin='small'

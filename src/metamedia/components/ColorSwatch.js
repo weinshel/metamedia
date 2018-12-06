@@ -55,7 +55,7 @@ class ColorSwatches extends React.Component {
   }
 
   render () {
-    const { page } = this.props
+    const { page, margin } = this.props
     if (!page) return null
     const palette = page.palette
     return (
@@ -70,6 +70,7 @@ class ColorSwatches extends React.Component {
           label='popover for page'
           offsetY='16px'
           mountNode={() => document.getElementById('root')}
+          variant='inverse'
         >
           <PopoverTrigger>
             <div
@@ -80,7 +81,9 @@ class ColorSwatches extends React.Component {
                 width: 60,
                 height: 60,
                 border: '2px solid black',
-                margin: 2
+                marginTop: 2,
+                marginBottom: 2,
+                marginLeft: margin
               }}
             >
               {palette.Vibrant && <ColorSquare color={palette.Vibrant._rgb} />}
