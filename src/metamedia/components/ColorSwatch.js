@@ -4,6 +4,8 @@ import Popover, { PopoverTrigger, PopoverContent } from '@instructure/ui-overlay
 import CloseButton from '@instructure/ui-buttons/lib/components/CloseButton'
 import View from '@instructure/ui-layout/lib/components/View'
 
+// import stringToColor from 'string-to-color'
+
 import PageInfo from './PageInfo'
 
 const ColorSquare = ({ color }) => (
@@ -55,7 +57,7 @@ class ColorSwatches extends React.Component {
   }
 
   render () {
-    const { page, margin } = this.props
+    const { page, margin, start, end } = this.props
     if (!page) return null
     const palette = page.palette
     return (
@@ -70,7 +72,7 @@ class ColorSwatches extends React.Component {
           label='popover for page'
           offsetY='16px'
           mountNode={() => document.getElementById('root')}
-          variant='inverse'
+          // variant='inverse'
         >
           <PopoverTrigger>
             <div
@@ -80,10 +82,17 @@ class ColorSwatches extends React.Component {
                 justifyContent: 'start',
                 width: 60,
                 height: 60,
-                border: '2px solid black',
-                marginTop: 2,
-                marginBottom: 2,
-                marginLeft: margin
+                borderWidth: 3,
+                borderColor: 'black',//stringToColor(page.tsId),
+                borderStyle: 'solid',
+                marginTop: 5,
+                marginBottom: 5,
+                marginLeft: start ? 25 : 0,
+                borderTopLeftRadius: start ? 35 : 0,
+                borderBottomLeftRadius: start ? 35: 0,
+                borderTopRightRadius: end ? 35 : 0,
+                borderBottomRightRadius: end ? 35 : 0,
+                overflow: 'hidden'
               }}
             >
               {palette.Vibrant && <ColorSquare color={palette.Vibrant._rgb} />}

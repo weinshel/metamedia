@@ -12,12 +12,15 @@ export default class ColorViz extends React.Component {
 
     let swatches = []
     let prevTsId = 0
-    data.forEach(page => {
-      if (!page.palette) return
-      const margin = page.tsId === prevTsId ? 0 : 16
+    for (let i = 0; i < data.length; i++) {
+      const page = data[i]
+      if (!page.palette) continue
+      const start = page.tsId !== prevTsId
+      const nextTsId = (i < data.length - 1) ? data[i + 1].tsId : 0
+      const end = page.tsId !== nextTsId
       prevTsId = page.tsId
-      swatches.push(<ColorSwatches key={Math.random()} page={page} margin={margin} />)
-    })
+      swatches.push(<ColorSwatches key={Math.random()} page={page} start={start} end={end} />)
+    }
 
     return (
       <div style={{
@@ -25,13 +28,6 @@ export default class ColorViz extends React.Component {
         justifyContent: 'start',
         flexWrap: 'wrap'
       }}>
-        {/* {tabSessionData.map(tabSession => (
-          <div key={Math.random()}>
-            {tabSession.pages.map(page => (
-              page.pageId && <ColorSwatches key={Math.random()} page={data[0]} />
-            ))}
-          </div>
-        ))} */}
         {swatches}
       </div>
     )
